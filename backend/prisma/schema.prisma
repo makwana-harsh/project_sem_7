@@ -11,3 +11,49 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+model user_auth_table{
+  id            String @id @default(uuid())
+
+  userFirstName  String
+  userLastName   String
+  username       String @unique
+  email          String @unique
+  hashedPassword String
+
+  createdAt DateTime @default(now())
+
+  profile        user_profile_table?
+  interviews     user_interview_table[]
+}
+
+model user_profile_table{
+  userId String @id
+
+  interviewNumber Int?
+  bio             String?
+  profilePhoto    String?
+  
+  user user_auth_table @relation(fields: [userId], references: [id])
+}
+
+model user_interview_table {
+  id String @id @default(uuid())
+
+  modelType String
+
+  startTime DateTime?
+  endTime   DateTime?
+
+  score Int?
+
+  status String
+
+  performanceSummary String?
+
+  userId String
+  user user_auth_table @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
